@@ -49,7 +49,7 @@ public class Treap<T> implements Tree {
 
     public Treap(T[] elements, Comparator<T> medComparator,
                  Comparator<T> maxComparator, QueryTree2D<T> parent) {
-        this(new LinkedList<T>(List.of(elements)),
+        this(new LinkedList<T>(Arrays.asList(elements)),
                 medComparator, maxComparator, parent, false);
     }
 
