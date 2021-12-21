@@ -11,18 +11,26 @@ The whole project is implemented in Java and the only library that I use is
 apache.commons.cli, which allows parsing command-line-arguments. I implement
 BSTs and treaps myself.
 
-## 1. Compiling the code
+Contents:
+1. Compiling the Code
+2. Step by Step Algorithm Visualization
+3. Command Line Interface
+4. What I Learned from This
+
+## 1. Compiling the Code
 
 Unzip the `project.zip` file, enter the `project` directory and run 
 `javac -cp src:lib/commons-cli-1.5.0.jar src/Main.java` 
 from there to compile the code. 
 
-## 2. Step by step algorithm visualization
+## 2. Step by Step Algorithm Visualization
+
+If you are running the code remotely, please use the `-X` flag with `ssh` so 
+that you can see the output.
 
 You can access the GUI for visualizing every step of the search algorithm by 
-running the program with the `-gui` command line option. I only have remote
-access to Tufts computers, so I can't test it on them but there is no reason
-it shouldn't work. By default, Java creates a window of 1800 by 1000 pixels. 
+running the program with the `-gui` command line option. 
+By default, Java creates a window of 1800 by 1000 pixels. 
 If you need different resolution, use `-resolution` command line option. 
 Important: `-file` and `-gui` options are incompatible since the GUI only 
 supports relatively small examples. You might invoke the GUI like so: 
@@ -68,7 +76,7 @@ While it may look like the BST and the treaps are updated dynamically as you
 add new points, they are actually being rebuilt at each change as I have
 focused on visualizing the base version of the algorithm for this project.
 
-## 3. Command line interface
+## 3. Command Line Interface
 
 To test the algorithm on larger examples, use the command line interface by
 invoking the program with the `-file` options like so: 
@@ -99,3 +107,22 @@ is a valid output for the set of queries above:
 3,6
 5,5 5,6 3,4 3,6 5,4
 ```
+
+You can verify that the program indeed returns this output by running it
+on `examples/simple.txt`
+
+## 4. What I Learned from This
+
+In my homework, I argued that each node must be associated with 2 treaps, but,
+in fact, it is enough to have one treap per subtree, i.e. one treap per
+every node in the BST. Depending on whether a given subtree is a right or left
+child, the associated node would have a treap open to the right or left, 
+respectively.
+
+It wasn't my goal to make the trees dynamic for this project but I did sketch 
+how the dynamic implementation would look like and it appears that a
+single insert operation would take `log^2(n)` time because one would affect
+`log(n)` nodes while inserting the new point in the BST and each node also
+has a treap associated with it. Adding/Removing a constant number of points
+to a treap should take `log(n)` time per treap (rebalancing of nodes might
+also cause the nodes to exchange treaps associated with them).
