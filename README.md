@@ -4,8 +4,9 @@ This project implements an algorithm for identifying points on a plane that
 fall within a specific rectangle. I use the data structure we had to describe 
 in homework 6 problem 1.b - a primary binary search tree with treaps hanging 
 from each of its nodes. The project includes: (1) a graphical user interface
-for dynamically visualizing the algorithm on small examples and (2) a command
-line interface for running multiple queries over a large set of points.
+for dynamically visualizing the algorithm on small examples, (2) a command
+line interface for running multiple queries over a large set of points, 
+(3) empirical runtime analysis.
 
 The whole project is implemented in Java and the only library that I use is
 apache.commons.cli, which allows parsing command-line-arguments. I implement
@@ -15,7 +16,8 @@ Contents:
 1. Compiling the Code
 2. Step by Step Algorithm Visualization
 3. Command Line Interface
-4. What I Learned from This
+4. Empirical Runtime
+5. What I Learned from This
 
 ## 1. Compiling the Code
 
@@ -111,7 +113,35 @@ is a valid output for the set of queries above:
 You can verify that the program indeed returns this output by running it
 on `examples/simple.txt`
 
-## 4. What I Learned from This
+## 4. Empirical runtime
+
+You can run the program with the `-performance=n` option to measure how
+long it takes to preprocess `n` points and then perform a query on them that
+is supposed to return 0 points (the query rectangle is set to a single point).
+For instance, you might run the program like this:
+
+`java -cp src:lib/commons-cli-1.5.0.jar Main -performance 1000`
+
+Here is a chart of results for some n 
+(manually rounded to first two significant figures):
+
+
+| N       | Time to preprocess | Average Query Time |
+|---------|--------------------|--------------------|
+| 100     | 8.0 * 10^6         | 1.6 * 10^5         |
+| 1000    | 1.7 * 10^7         | 1.4 * 10^5         |
+| 10000   | 1.4 * 10^8         | 1.7 * 10^5         |
+| 100000  | 9.5 * 10^8         | 1.8 * 10^5         |
+| 1000000 | 1.2 * 10^10        | 1.8 * 10^5         |
+
+One can easily see that the preprocessing time grows almost linearly, 
+which is consistent with the theory because O(nlog(n)) is O(n^(1+a)) for any
+a, however small. The query time remains almost exactly the same and, in fact,
+even decreases from n=100 to n=1000. I think this must be because the actual
+query time is so fast that the accompanying processes (i.e. printing the 
+results, etc.) takes up the majority of the measured time.
+
+## 5. What I Learned from This
 
 In my homework, I argued that each node must be associated with 2 treaps, but,
 in fact, it is enough to have one treap per subtree, i.e. one treap per

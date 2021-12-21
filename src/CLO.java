@@ -8,6 +8,7 @@ public class CLO { // command line options
     public final boolean gui; // whether to launch the GUI
     public final String file; // contains points/queries. Incompatible with GUI.
     public final Dimension resolution; // resolution of GUI screen
+    public final int performance; // do a performance test for this many pts
 
     private static final Dimension RESOLUTION_DEFAULT =
             new Dimension(1800, 1000);
@@ -16,9 +17,18 @@ public class CLO { // command line options
         Options options = new Options();
 
         Option gui = new Option("gui", false,"Launch the GUI. Does " +
-                "not work with -file; GUI is designed for small examples");
+                "not work with -file or -performance; " +
+                "GUI is designed for small examples");
         gui.setRequired(false);
         options.addOption(gui);
+
+        Option performance = new Option("performance", true,
+                "Test the performance of the implementation on " +
+                        " a set of points of this size. Does not work " +
+                        "with -file or -gui. Should be >= 1000");
+        performance.setRequired(false);
+        performance.setType(Number.class);
+        options.addOption(performance);
 
         Option file = new Option("f", "file", true, "File with the set of " +
                 "points on first line: x1,y2 x2,y2 ... and with two query " +
@@ -48,18 +58,30 @@ public class CLO { // command line options
         }
 
         this.gui = cmd.hasOption("gui");
+        this.performance = cmd.hasOption("performance") ?
+                Integer.parseInt(cmd.getOptionValue("performance")) :
+                -1;
         this.file = cmd.hasOption("file") ? cmd.getOptionValue("file") : null;
         this.resolution = cmd.hasOption("resolution") ?
                 parseResolution(cmd.getOptionValue("resolution")) :
                 RESOLUTION_DEFAULT;
 
-        if (this.gui && this.file != null) {
-            System.out.println("-gui and -file are incompatible. Use one.");
+        if (cmd.hasOption("performance") && (this.performance < 100)) {
+            System.out.println("Performance tests should be conducted for at " +
+                    "least 100 point");
+            System.exit(0);
+        }
+
+        if ((this.gui && this.file != null) ||
+                (this.performance != -1 && this.file != null) ||
+                (this.gui && this.performance != -1)) {
+            System.out.println("-gui, -file, and -performance are pariwise " +
+                    "incompatible. Use one.");
             System.exit(0);
 
         }
-        if (!this.gui && this.file == null) {
-            System.out.println("Use one of -gui or -file");
+        if (!this.gui && this.file == null && this.performance == -1) {
+            System.out.println("Use one of -gui, -file, or -performance");
             System.exit(0);
         }
     }
